@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "kaitai-struct-compiler -t javascript -d dist resources/bmp.ksy && babel src --out-dir dist",
+    "postinstall": "npm run ksy && npm run js",
+    "ksy": "node ksc.js -d dist resources/bmp.ksy",
+    "js": "babel src --out-dir dist",
     "watch": "babel --watch src --out-dir dist"
   },
   "author": "",
@@ -14,7 +16,8 @@
     "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
     "kaitai-struct": "github:kaitai-io/kaitai_struct_javascript_runtime#master",
-    "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20180205.11616",
+    "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20190424.105032",
+    "yaml": "^1.7.2",
     "yargs": "^15.0.2"
   }
 }
