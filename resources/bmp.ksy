@@ -111,6 +111,8 @@ types:
         contents: "BM"
       - id: len_file
         -orig-id: bfSize
+        doc: not reliable, mostly ignored by BMP decoders
+        doc-ref: http://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html q/pal8os2-sz.bmp
         type: u4
       - id: reserved1
         -orig-id: bfReserved1
@@ -165,8 +167,8 @@ types:
         type:
           switch-on: is_core_header
           cases:
-            true: s2
-            false: s4
+            true: u2
+            false: u4
       - id: image_height_raw
         -orig-id: biHeight
         doc: Image height, px (positive => bottom-up image, negative => top-down image)
@@ -211,9 +213,11 @@ types:
         value: 'image_height_raw < 0 ? -image_height_raw : image_height_raw'
       bottom_up:
         value: image_height_raw > 0
+      uses_fixed_palette:
+        value: not (bits_per_pixel == 16 or bits_per_pixel == 24 or bits_per_pixel == 32)
   bitmap_info_extension:
     -orig-id: BITMAPINFOHEADER
-    doc-ref: https://docs.microsoft.com/cs-cz/windows/win32/api/wingdi/ns-wingdi-bitmapinfoheader
+    doc-ref: https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
     seq:
       - id: compression
         -orig-id: biCompression
@@ -227,6 +231,9 @@ types:
         enum: os2_compressions
       - id: len_image
         -orig-id: biSizeImage
+        doc: |
+          If biCompression is BI_JPEG or BI_PNG, indicates the size of the JPEG or PNG image buffer.
+          This may be set to zero for BI_RGB bitmaps.
         type: u4
       - id: x_resolution
         -orig-id: biXPelsPerMeter

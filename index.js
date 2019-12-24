@@ -16,8 +16,10 @@ if (Array.isArray(argv._) && argv._[0] !== '') {
             throw err;
         }
         const bmp = new Bmp(new KaitaiStream(data));
-        const coreHeader = utils.getOwnPropsFromStruct(bmp.dibInfo.header, true);
-        console.dir(coreHeader, {depth: null});
+        const fileHeader = utils.getOwnPropsFromStruct(bmp.fileHdr);
+        console.dir(fileHeader, {depth: null});
+        const dibHeader = utils.getOwnPropsFromStruct(bmp.dibInfo.header, true);
+        console.dir(dibHeader, {depth: null});
 
         let comprType;
         try {
@@ -31,5 +33,9 @@ if (Array.isArray(argv._) && argv._[0] !== '') {
         }
 
         console.log('compression:', typeof comprType === 'number' ? Compression[comprType] : 'UNKNOWN');
+        if (bmp.dibInfo.header.usesFixedPalette) {
+            const byteToHex = b => b.toString(16).padStart(2, '0');
+            console.log(bmp.dibInfo.colorTable.colors.map(c => '#' + [c.red, c.green, c.blue].map(byteToHex).join('')));
+        }
     });
 }

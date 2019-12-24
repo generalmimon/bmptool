@@ -11,10 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "kaitai-struct": "^0.8.0-SNAPSHOT.11",
-    "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20180205.11616",
-    "yargs": "^15.0.2",
     "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7"
+    "@babel/core": "^7.7.7",
+    "kaitai-struct": "github:kaitai-io/kaitai_struct_javascript_runtime#master",
+    "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20180205.11616",
+    "yargs": "^15.0.2"
   }
 }
