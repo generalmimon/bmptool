@@ -91,10 +91,10 @@ doc: |
       * BITMAPV4HEADER (WIN4XBITMAPHEADER)
 
 seq:
-  - id: file_hdr
+  - id: file_header
     type: file_header
   - id: dib_info
-    size: file_hdr.ofs_bitmap - 14 # 14 = file_hdr._sizeof (TODO: replace when KSC 0.9 is released)
+    size: file_header.ofs_bitmap - 14 # 14 = file_header._sizeof (TODO: replace when KSC 0.9 is released)
     type: bitmap_info
   - id: bitmap
     type: bitmap
