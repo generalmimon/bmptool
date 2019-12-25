@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "iconv-lite": "^0.5.0",
     "kaitai-struct": "github:kaitai-io/kaitai_struct_javascript_runtime#master",
     "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20190424.105032",
     "pngjs": "^3.4.0",

@@ -385,7 +385,7 @@ types:
         -orig-id: bV5Intent
         type: u4
         enum: intent
-      - id: offset_profile
+      - id: ofs_profile
         doc: The offset, in bytes, from the beginning of the BITMAPV5HEADER structure to the start of the profile data.
         -orig-id: bV5ProfileData
         type: u4
@@ -395,6 +395,26 @@ types:
       - id: reserved
         -orig-id: bV5Reserved
         type: u4
+    meta:
+      encoding: windows-1252 # for the file name of linked profile
+    instances:
+      has_profile:
+        value: >-
+          _parent.bitmap_v4_ext.color_space_type == color_space::profile_linked
+          or _parent.bitmap_v4_ext.color_space_type == color_space::profile_embedded
+      profile_data:
+        if: has_profile
+        io: _root._io
+        pos: 14 + ofs_profile # 14 = _root.file_header._sizeof
+        size: len_profile
+        type:
+          switch-on: _parent.bitmap_v4_ext.color_space_type == color_space::profile_linked
+          cases:
+            true: strz
+        doc-ref: https://docs.microsoft.com/cs-cz/previous-versions/windows/desktop/wcs/using-structures-in-wcs-1-0 "If the profile is embedded,
+          profile data is the actual profile, and if it is linked, the profile data is the
+          null-terminated file name of the profile. This cannot be a Unicode string. It must be composed exclusively
+          of characters from the Windows character set (code page 1252)."
 
   color_table:
     params:
