@@ -445,6 +445,13 @@ enums:
       id: png
       -orig-id: BI_PNG
       doc: BMP file includes whole PNG file in image buffer
+    6:
+      id: alpha_bitfields
+      -orig-id: BI_ALPHABITFIELDS
+      doc: only Windows CE 5.0 with .NET 4.0 or later
+      doc-ref:
+        - https://en.wikipedia.org/wiki/BMP_file_format#DIB_header_(bitmap_information_header) table of compression methods
+        - http://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html q/rgba32abf.bmp
   os2_compressions:
     # https://www.fileformat.info/format/os2bmp/egff.htm#OS2BMP-DMYID.3.2
     0:

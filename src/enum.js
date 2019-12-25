@@ -8,8 +8,9 @@ const Compression = Object.freeze({
     BITFIELDS: 3,
     JPEG: 4,
     PNG: 5,
-    HUFFMAN_1D: 6,
-    RLE24: 7,
+    ALPHA_BITFIELDS: 6,
+    HUFFMAN_1D: 7,
+    RLE24: 8,
 
     0: 'RGB',
     1: 'RLE8',
@@ -17,7 +18,8 @@ const Compression = Object.freeze({
     3: 'BITFIELDS',
     4: 'JPEG',
     5: 'PNG',
-    6: 'HUFFMAN_1D',
-    7: 'RLE24',
+    6: 'ALPHA_BITFIELDS',
+    7: 'HUFFMAN_1D',
+    8: 'RLE24'
 });
 exports.Compression = Compression;

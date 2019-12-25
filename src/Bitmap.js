@@ -15,18 +15,19 @@ class Bitmap {
             return Compresssion.RGB;
         }
         const biExt = this.bmp.dibInfo.header.bitmapInfoExt;
-        if (biExt.extendsOs22xBitmap) {
+        if (this.bmp.dibInfo.header.extendsOs22xBitmap) {
             const os2ComprType = Bmp.Os2Compressions[biExt.os2Compression];
             if (typeof os2ComprType !== 'string') {
                 throw new UnknownCompressionError(`Unknown OS/2 bitmap compression: ${biExt.os2Compression}`);
             }
             return Compresssion[os2ComprType];
         }
+
         const comprType = Bmp.Compressions[biExt.compression];
         if (typeof comprType !== 'string') {
-            throw new UnknownCompressionError(`Unknown bitmap compression: ${biExt.os2Compression}`);
+            throw new UnknownCompressionError(`Unknown bitmap compression: ${biExt.compression}`);
         }
-        return Compresssion[Bmp.Compressions[biExt.compression]];
+        return Compresssion[comprType];
     }
 
     getBitmapPixelCount() {
