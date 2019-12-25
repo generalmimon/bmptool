@@ -9,7 +9,7 @@ const getOwnPropsFromStruct = (struct, deep = false) => {
                     return desc.enumerable || !desc.writable; // seq field or instance (read-only)
                 })
         );
-    
+
     for (let key of keys) {
         if (key.charAt(0) === '_') {
             if(key.substring(0, 3) === '_m_') {
@@ -28,4 +28,10 @@ const getOwnPropsFromStruct = (struct, deep = false) => {
     }
     return obj;
 };
+
+const getPercievedBrightnessFromRgb = (r, g, b) => {
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+};
+
 exports.getOwnPropsFromStruct = getOwnPropsFromStruct;
+exports.getPercievedBrightnessFromRgb = getPercievedBrightnessFromRgb;

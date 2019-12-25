@@ -12,6 +12,7 @@ const argv = yargs
     .argv;
 
 const fs = require('fs');
+const path = require('path');
 const YAML = require('yaml');
 
 if (argv._.length > 0) {
@@ -25,7 +26,7 @@ if (argv._.length > 0) {
             compiler.compile('javascript', ksy, null, false).then(function(files) {
                 for (let fileName in files) {
                     const output = files[fileName];
-                    fileName = argv.d + '/' + fileName;
+                    fileName = path.join(argv.d, fileName);
                     fs.writeFile(fileName, output, (err) => {
                         if (err) {
                             throw err;

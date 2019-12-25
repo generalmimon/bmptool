@@ -17,6 +17,7 @@
     "@babel/core": "^7.7.7",
     "kaitai-struct": "github:kaitai-io/kaitai_struct_javascript_runtime#master",
     "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20190424.105032",
+    "pngjs": "^3.4.0",
     "yaml": "^1.7.2",
     "yargs": "^15.0.2"
   }
