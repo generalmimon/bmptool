@@ -136,10 +136,7 @@ types:
         size: header_size - 4
       - id: color_mask
         doc: Valid only for BITMAPINFOHEADER, in all headers extending it the masks are contained in the header itself.
-        if:
-          not _io.eof and
-          (header.header_size == header_type::bitmap_info_header.to_i) and
-          header.bitmap_info_ext.compression == compressions::bitfields
+        if: not _io.eof and is_color_mask_here
         type: color_mask(false)
       - id: color_table
         -orig-id: bmciColors
@@ -149,6 +146,55 @@ types:
             header.extends_bitmap_info ? header.bitmap_info_ext.num_colors_used : 0
           )'
         size-eos: true
+    instances:
+      is_color_mask_here:
+        value: >-
+          header.header_size == header_type::bitmap_info_header.to_i
+            and (header.bitmap_info_ext.compression == compressions::bitfields or header.bitmap_info_ext.compression == compressions::alpha_bitfields)
+      is_color_mask_given:
+        value: >-
+          header.extends_bitmap_info
+          and (header.bitmap_info_ext.compression == compressions::bitfields or header.bitmap_info_ext.compression == compressions::alpha_bitfields)
+          and (is_color_mask_here or header.is_color_mask_here)
+      color_mask_given:
+        if: is_color_mask_given
+        value: >-
+          is_color_mask_here
+            ? color_mask
+            : header.color_mask
+      color_mask_red:
+        value: >-
+          is_color_mask_given
+            ? color_mask_given.red_mask
+            : header.bits_per_pixel == 16
+              ? 0b11111_00000_00000
+              : header.bits_per_pixel == 24 or header.bits_per_pixel == 32
+                ? 0xff_00_00
+                : 0
+        #         ^ uses fixed color palette, so color mask is N/A
+      color_mask_green:
+        value: >-
+          is_color_mask_given
+            ? color_mask_given.green_mask
+            : header.bits_per_pixel == 16
+              ? 0b00000_11111_00000
+              : header.bits_per_pixel == 24 or header.bits_per_pixel == 32
+                ? 0x00_ff_00
+                : 0
+      color_mask_blue:
+        value: >-
+          is_color_mask_given
+            ? color_mask_given.blue_mask
+            : header.bits_per_pixel == 16
+              ? 0b00000_00000_11111
+              : header.bits_per_pixel == 24 or header.bits_per_pixel == 32
+                ? 0x00_00_ff
+                : 0
+      color_mask_alpha:
+        value: >-
+          is_color_mask_given and color_mask_given.has_alpha_mask
+            ? color_mask_given.alpha_mask
+            : 0
 
   bitmap_header:
     -orig-id:
@@ -189,6 +235,9 @@ types:
       - id: bitmap_info_ext
         if: extends_bitmap_info
         type: bitmap_info_extension
+      - id: color_mask
+        if: is_color_mask_here
+        type: color_mask(header_size != header_type::bitmap_v2_info_header.to_i)
       - id: os2_2x_bitmap_ext
         if: extends_os2_2x_bitmap
         type: os2_2x_bitmap_extension
@@ -213,20 +262,25 @@ types:
         value: 'image_height_raw < 0 ? -image_height_raw : image_height_raw'
       bottom_up:
         value: image_height_raw > 0
+      is_color_mask_here:
+        value: header_size == header_type::bitmap_v2_info_header.to_i
+          or header_size == header_type::bitmap_v3_info_header.to_i
+          or extends_bitmap_v4
       uses_fixed_palette:
         value: not (bits_per_pixel == 16 or bits_per_pixel == 24 or bits_per_pixel == 32)
+          and not (extends_bitmap_info and not extends_os2_2x_bitmap and (bitmap_info_ext.compression == compressions::jpeg or bitmap_info_ext.compression == compressions::png))
   bitmap_info_extension:
     -orig-id: BITMAPINFOHEADER
     doc-ref: https://docs.microsoft.com/en-us/previous-versions/dd183376(v=vs.85)
     seq:
       - id: compression
         -orig-id: biCompression
-        if: not extends_os2_2x_bitmap
+        if: not _parent.extends_os2_2x_bitmap
         type: u4
         enum: compressions
       - id: os2_compression
         -orig-id: Compression
-        if: extends_os2_2x_bitmap
+        if: _parent.extends_os2_2x_bitmap
         type: u4
         enum: os2_compressions
       - id: len_image
@@ -247,15 +301,6 @@ types:
       - id: num_colors_important
         -orig-id: biClrImportant
         type: u4
-      - id: color_mask
-        if: 'hdr_size == header_type::bitmap_v2_info_header.to_i or
-          hdr_size == header_type::bitmap_v3_info_header.to_i'
-        type: color_mask(hdr_size == header_type::bitmap_v3_info_header.to_i)
-    instances:
-      hdr_size:
-        value: _parent.header_size
-      extends_os2_2x_bitmap:
-        value: _parent.extends_os2_2x_bitmap
   os2_2x_bitmap_extension:
     -orig-id: OS22XBITMAPHEADER
     doc-ref: https://www.fileformat.info/format/os2bmp/egff.htm#OS2BMP-DMYID.3.2
@@ -302,8 +347,6 @@ types:
     -orig-id: BITMAPV4HEADER
     doc-ref: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapv4header
     seq:
-      - id: color_mask
-        type: color_mask(true)
       - id: color_space_type
         -orig-id: bV4CSType
         type: u4
