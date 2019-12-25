@@ -9,12 +9,14 @@ const Compression = require('./dist/enum').Compression;
 const utils = require('./dist/utils');
 const UnknownCompressionError = require('./dist/exception').UnknownCompressionError;
 
-if (Array.isArray(argv._) && argv._[0] !== '') {
-    const fileName = argv._[0];
+if (argv._.length > 0) {
+    argv._.forEach(fileName => {
     fs.readFile(fileName, (err, data) => {
         if (err) {
             throw err;
         }
+            console.log(`${fileName}`);
+
         const bmp = new Bmp(new KaitaiStream(data));
         const fileHeader = utils.getOwnPropsFromStruct(bmp.fileHdr);
         console.dir(fileHeader, {depth: null});
