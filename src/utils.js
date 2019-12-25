@@ -18,7 +18,7 @@ const getOwnPropsFromStruct = (struct, deep = false) => {
                 continue;
             }
         }
-        if (typeof struct[key] === 'object') {
+        if (typeof struct[key] === 'object' && !Object.getPrototypeOf(struct[key]).BYTES_PER_ELEMENT) {
             if (deep) {
                 obj[key] = getOwnPropsFromStruct(struct[key], deep);
             }
