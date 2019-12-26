@@ -16,5 +16,8 @@
     "pngjs": "^3.4.0",
     "yaml": "^1.7.2",
     "yargs": "^15.0.2"
+  },
+  "devDependencies": {
+    "pixelmatch": "^5.1.0"
   }
 }
