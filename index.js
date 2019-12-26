@@ -5,10 +5,10 @@ const argv = yargs.argv;
 const fs = require('fs');
 const path = require('path');
 const KaitaiStream = require('kaitai-struct/KaitaiStream');
-const Bmp = require('./dist/Bmp');
-const Compression = require('./dist/enum').Compression;
-const utils = require('./dist/utils');
-const UnknownCompressionError = require('./dist/exception').UnknownCompressionError;
+const Bmp = require('./src/Bmp');
+const Compression = require('./src/enum').Compression;
+const utils = require('./src/utils');
+const UnknownCompressionError = require('./src/exception').UnknownCompressionError;
 
 const PNG = require('pngjs').PNG;
 
