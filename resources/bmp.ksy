@@ -142,7 +142,7 @@ types:
         -orig-id: bmciColors
         if: not _io.eof
         type: 'color_table(
-            header.extends_bitmap_info,
+            not header.is_core_header,
             header.extends_bitmap_info ? header.bitmap_info_ext.num_colors_used : 0
           )'
         size-eos: true
@@ -410,8 +410,11 @@ types:
     seq:
       - id: colors
         type: rgb_record(has_reserved_field)
-        repeat: until
-        repeat-until: _io.eof or _index == colors_num
+        repeat: expr
+        repeat-expr: 'colors_num < present_colors_num ? colors_num : present_colors_num'
+    instances:
+      present_colors_num:
+        value: '_io.size / (has_reserved_field ? 4 : 3)'
   color_mask:
     params:
       - id: has_alpha_mask
