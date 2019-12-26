@@ -74,7 +74,7 @@ class Bitmap {
 
     resolveColorFromPalette(idx) {
         const color = this.bmp.dibInfo.colorTable.colors[idx];
-        return [color.red, color.blue, color.green, 255];
+        return [color.red, color.green, color.blue, 255];
     }
 
     /** @see {@link this.resolveColorMasksBitShift} has to be called before */
