@@ -137,7 +137,7 @@ types:
       - id: color_mask
         doc: Valid only for BITMAPINFOHEADER, in all headers extending it the masks are contained in the header itself.
         if: not _io.eof and is_color_mask_here
-        type: color_mask(false)
+        type: color_mask(header.bitmap_info_ext.compression == compressions::alpha_bitfields)
       - id: color_table
         -orig-id: bmciColors
         if: not _io.eof
