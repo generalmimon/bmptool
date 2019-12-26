@@ -5,16 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm run ksy && npm run js",
-    "ksy": "node ksc.js -d dist resources/bmp.ksy",
-    "js": "babel src --out-dir dist",
-    "watch": "babel --watch src --out-dir dist"
+    "postinstall": "npm run build",
+    "build": "node ksc.js -d src resources/bmp.ksy"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
     "kaitai-struct": "github:kaitai-io/kaitai_struct_javascript_runtime#master",
     "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20190424.105032",
     "pngjs": "^3.4.0",
