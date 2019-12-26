@@ -33,5 +33,11 @@ const getPercievedBrightnessFromRgb = (r, g, b) => {
     return 0.299 * r + 0.587 * g + 0.114 * b;
 };
 
+const getPixelColorFromBitmap = (x, y, bitmap) => {
+    const i = (bitmap.bmp.dibInfo.header.imageWidth * y + x) * 4;
+    return [bitmap.data[i], bitmap.data[i + 1], bitmap.data[i + 2], bitmap.data[i + 3]];
+};
+
 exports.getOwnPropsFromStruct = getOwnPropsFromStruct;
 exports.getPercievedBrightnessFromRgb = getPercievedBrightnessFromRgb;
+exports.getPixelColorFromBitmap = getPixelColorFromBitmap;
