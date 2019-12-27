@@ -1,7 +1,0 @@
-#!/bin/sh
-
-for file in tmp/*.png
-do
-    var=`basename $file`
-    npx pixelmatch "$file" /d/temp/img-samples/bmpsuite-2.5/html/"$var" diff/"$var" 0 true
-done
