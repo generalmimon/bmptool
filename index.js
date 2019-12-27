@@ -1,6 +1,12 @@
 'use strict';
 const yargs = require('yargs');
-const argv = yargs.argv;
+const argv = yargs
+    .usage('Usage: node $0 [options] <file>...')
+    .demandCommand(1, 'You must specify at least one .bmp file')
+    .option('d', {description: 'output directory for generated PNG images'})
+    .alias('d', 'outdir')
+    .default('d', 'samples/out/')
+    .argv;
 
 const fs = require('fs');
 const path = require('path');
@@ -58,7 +64,7 @@ if (argv._.length > 0) {
 
             const png = new PNG({width: bmp.dibInfo.header.imageWidth, height: bmp.dibInfo.header.imageHeight});
             png.data = Buffer.from(bmp.bitmap.data);
-            const outputFileName = path.resolve('tmp/', path.basename(fileName, '.bmp') + '.png');
+            const outputFileName = path.resolve(argv.d, path.basename(fileName, '.bmp') + '.png');
             png.pack().pipe(fs.createWriteStream(outputFileName));
             console.log(`output PNG: ${outputFileName}`);
         });
