@@ -1,11 +1,16 @@
 'use strict';
 const yargs = require('yargs');
-const argv = yargs.argv;
+const argv = yargs
+    .usage('Usage: node $0 [options] <file>...')
+    .demandCommand(1, 'You must specify at least one .bmp file')
+    .option('d', {description: 'output directory for generated PNG images'})
+    .alias('d', 'outdir')
+    .default('d', 'samples/out/')
+    .argv;
 
 const fs = require('fs');
 const path = require('path');
 const KaitaiStream = require('kaitai-struct/KaitaiStream');
-const Bmp = require('./src/Bmp');
 const Compression = require('./src/enum').Compression;
 const utils = require('./src/utils');
 const UnknownCompressionError = require('./src/exception').UnknownCompressionError;
@@ -16,11 +21,22 @@ if (argv._.length > 0) {
     argv._.forEach(fileName => {
         fs.readFile(fileName, (err, data) => {
             if (err) {
-                throw err;
+                console.log('ERROR: ', e.message);
+                console.log(e.stack);
+                return;
             }
             console.log(`${fileName}`);
 
-            const bmp = new Bmp(new KaitaiStream(data));
+            const Bmp = require('./src/Bmp');
+
+            let bmp;
+            try {
+                bmp = new Bmp(new KaitaiStream(data));
+            } catch (e) {
+                console.log('ERROR: ', e.message);
+                console.log(e.stack);
+                return;
+            }
 
             const dibHdr = utils.getOwnPropsFromStruct(bmp.dibInfo.header, true);
             console.dir(dibHdr, {depth: null});
@@ -38,6 +54,7 @@ if (argv._.length > 0) {
 
             console.log('compression:', typeof comprType === 'number' ? Compression[comprType] : 'UNKNOWN');
             if (comprType !== Compression.JPEG && comprType !== Compression.PNG && bmp.dibInfo.header.usesFixedPalette) {
+                console.log(`Number of colors in palette: ${bmp.dibInfo.colorTable.colors.length}`);
                 const byteToHex = b => b.toString(16).padStart(2, '0');
                 console.log(bmp.dibInfo.colorTable.colors.map(c => '#' + [c.red, c.green, c.blue].map(byteToHex).join('')));
             }
@@ -58,7 +75,7 @@ if (argv._.length > 0) {
 
             const png = new PNG({width: bmp.dibInfo.header.imageWidth, height: bmp.dibInfo.header.imageHeight});
             png.data = Buffer.from(bmp.bitmap.data);
-            const outputFileName = path.resolve('tmp/', path.basename(fileName, '.bmp') + '.png');
+            const outputFileName = path.resolve(argv.d, path.basename(fileName, '.bmp') + '.png');
             png.pack().pipe(fs.createWriteStream(outputFileName));
             console.log(`output PNG: ${outputFileName}`);
         });
