@@ -40,9 +40,11 @@ node index.js /path/to/image.bmp /path/to/images/*.bmp
 
 ## Motivation
 
-Most programs and libraries that claim they can work with BMP files support only limited subset of the specification. This limits the usage of the format to the very core supported by most of the programs and disallows the use of any advanced features. For example, who knows that BMP can save alpha channel? Any feature invented by file format authors is useless if programmers don't want to implement it.
+Many programs and libraries that claim they can work with BMP files support only limited subset of the specification. This limits the usage of the format to the very core supported by most of the programs and disallows the use of any advanced features. For example, who knows that BMP can save alpha channel? Any feature invented by file format authors is useless if programmers don't want to implement it.
 
 With Kaitai Struct, it's easy to define a human-readable format specification that is unambiguous and ready to be compiled into parser code, so the programmers have less troubles with the internal representation of the binary format and can focus on what to do with the data obtained from the file.
+
+The BMP format specification in [Kaitai Struct](https://kaitai.io/) language is the core of this tool, it is used to be compiled into JavaScript parsing library to get structured data. The operating JavaScript code is just a small wrapper around the generated code from the `resources/bmp.ksy` specification, it's simple to compile it into another language and implement some similar wrapping code. See [Kaitai Struct](https://kaitai.io/) project for more info.
 
 ## Development
 
@@ -61,13 +63,15 @@ I made a simple shell script that downloads samples from [BMP Suite](https://ent
 ./bin/get-bmpsuite
 ```
 
-Then you need to run the BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the basename while generating output files, so it's necessary to process each folder (g/, q/, b/) independently:
+Then you need to run the BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the file basename while generating output files, so it's necessary to process each folder (g/, q/ and b/) independently:
 
 ```sh
 node index.js samples/in/bmpsuite-2.5/g/*.bmp -d samples/out/bmpsuite-2.5/g/
 node index.js samples/in/bmpsuite-2.5/q/*.bmp -d samples/out/bmpsuite-2.5/q/
 node index.js samples/in/bmpsuite-2.5/b/*.bmp -d samples/out/bmpsuite-2.5/b/
 ```
+
+If you want to log the parse exceptions with the .bmp filenames, add `-l log/failed.log` to the end.
 
 Diffs between the real output files (from out/) and "ideal" ones (from exp/) are generated as follows:
 
