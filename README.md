@@ -1,7 +1,7 @@
-# BMPtool
+# BMP Tool
 > Simple tool built on [Kaitai Struct](https://kaitai.io/) for reading BMP images
 
-BMPtool is a Node.js CLI tool written in JavaScript. It is intended to be able to parse various BMP files, created on any device, in any program. I try to support all color depths, header types and compression methods for which I can find documentation or sample files.
+BMP Tool is a Node.js CLI tool written in JavaScript. It is intended to be able to parse various BMP files, created on any device, in any program. I try to support all color depths, header types and compression methods for which I can find documentation or sample files.
 
 When a BMP file is loaded, one can save it in another image format (e.g. PNG), with another compression method, bit depth or header type to make it more portable etc.
 
@@ -53,8 +53,30 @@ npm run build
 
 ### Testing
 
-Currently manual, take some sample .bmp from [BMP Suite](https://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html) and see if the resulting .png file in the `tmp/` folder matches image in the `Correct display` column.
+The directory samples/ is designated for test samples. There are 4 subdirectories inside: in/, out/, exp/ and diff/. Input BMP samples should be put to the in/ folder, output PNG files to the out/ folder. The folder exp/ is intended for PNG samples that represent the correct interpretation of the corresponding BMP input files in the in/ directory. The diff/ directory is an output directory for generated diffs between the samples from out/ and exp/, they show how much differ the real output files from BMP Tool from the expected ones.
+
+I made a simple shell script that downloads samples from [BMP Suite](https://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html) and fills the in/ and exp/ folders. Invocation is simple (make sure the current working directory is the repository root):
+
+```sh
+./bin/get-bmpsuite
+```
+
+Then you need to run the BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the basename while generating output files, so it's necessary to process each folder (g/, q/, b/) independently:
+
+```sh
+node index.js samples/in/bmpsuite-2.5/g/*.bmp -d samples/out/bmpsuite-2.5/g/
+node index.js samples/in/bmpsuite-2.5/q/*.bmp -d samples/out/bmpsuite-2.5/q/
+node index.js samples/in/bmpsuite-2.5/b/*.bmp -d samples/out/bmpsuite-2.5/b/
+```
+
+Diffs between the real output files (from out/) and "ideal" ones (from exp/) are generated as follows:
+
+```sh
+./bin/test
+```
 
 ## Built with
   * [Kaitai Struct](https://kaitai.io/) - BMP format spec `resources/bmp.ksy` is compiled to JS parsing code
   * [pngjs](https://www.npmjs.com/package/pngjs) - for saving parsed bitmap to PNG image
+  * [BMP Suite](https://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html) - sample files for testing
+  * [pixelmatch](https://www.npmjs.com/package/pixelmatch) - for generating diffs between test samples and images that are expected to match the interpretation of the samples
