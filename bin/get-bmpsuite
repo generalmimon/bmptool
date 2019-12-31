@@ -1,6 +1,9 @@
 #!/bin/sh
 
 BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zip
+
+rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/* samples/exp/bmpsuite-2.5/*
+
 tmpfile=`mktemp`
 curl "$BMPSUITE_ZIP_URL" -o "$tmpfile"
 unzip "$tmpfile" -d samples/in 'bmpsuite-2.5/b/*.bmp' 'bmpsuite-2.5/g/*.bmp' 'bmpsuite-2.5/q/*.bmp'
@@ -53,4 +56,5 @@ do
     [ -f ../../exp/bmpsuite-2.5/html/$file_id.png ] && mv -v ../../exp/bmpsuite-2.5/html/$file_id.png ../../exp/bmpsuite-2.5/$(basename $(dirname $file))/$file_id.png
 done
 
-cd ../../out && mkdir bmpsuite-2.5/ && cd bmpsuite-2.5/ && mkdir b/ g/ q/
+cd ../../out
+[ -d bmpsuite-2.5/ ] || mkdir bmpsuite-2.5/ && cd bmpsuite-2.5/ && mkdir b/ g/ q/
