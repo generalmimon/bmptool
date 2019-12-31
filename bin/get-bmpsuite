@@ -1,0 +1,69 @@
+#!/bin/sh
+
+BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zip
+
+rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/*
+for dir in samples/exp/bmpsuite-2.5/*
+do
+    [ ! -d "$dir" ] || [ "$(basename "$dir")" = "override" ] && continue
+    rm -vrf "$dir"
+done
+
+tmpfile=$(mktemp)
+curl "$BMPSUITE_ZIP_URL" -o "$tmpfile"
+unzip "$tmpfile" -d samples/in 'bmpsuite-2.5/b/*.bmp' 'bmpsuite-2.5/g/*.bmp' 'bmpsuite-2.5/q/*.bmp'
+unzip "$tmpfile" -d samples/exp 'bmpsuite-2.5/html/*.png'
+
+cd samples/exp/bmpsuite-2.5 || exit
+mkdir b/ g/ q/
+
+cp -v -f override/*.png html/
+
+# TODO: maybe create symlinks instead
+cd html/ || exit
+
+cp pal1.png pal1wb.png
+cp pal1.png pal1huff.png
+cp pal4.png pal4rle.png
+cp pal8.png pal8-0.png
+cp pal8.png pal8os2.png
+cp pal8.png pal8rle.png
+cp pal8.png pal8topdown.png
+cp pal8.png pal8v4.png
+cp pal8.png pal8v5.png
+cp pal8.png pal8offs.png
+cp pal8.png pal8os2-hs.png
+cp pal8.png pal8os2-sz.png
+cp pal8.png pal8os2sp.png
+cp pal8.png pal8os2v2-16.png
+cp pal8.png pal8os2v2-40sz.png
+cp pal8.png pal8os2v2-sz.png
+cp pal8.png pal8os2v2.png
+cp pal8.png pal8oversizepal.png
+cp rgb16-565.png rgb16-565pal.png
+cp rgb16.png rgb16bfdef.png
+cp rgb24.png rgb24pal.png
+cp rgb24.png rgb32.png
+cp rgb24.png rgb32bf.png
+cp rgb24.png rgb32bfdef.png
+cp rgb24.png rgb24largepal.png
+cp rgb24.png rgb24lprof.png
+cp rgb24.png rgb24png.png
+cp rgb24.png rgb24prof.png
+cp rgb24.png rgb24prof2.png
+cp rgb24.png rgb32-111110.png
+cp rgb24.png rgb32-xbgr.png
+cp rgb24.png rgb32fakealpha.png
+cp rgb24.png rgb32h52.png
+cp rgba32.png rgba32abf.png
+cp rgba32.png rgba32h56.png
+
+cd ../../../in/bmpsuite-2.5 || exit
+for file in */*.bmp
+do
+    file_id=$(basename "$file" .bmp)
+    [ -f ../../exp/bmpsuite-2.5/html/"$file_id".png ] && mv -v ../../exp/bmpsuite-2.5/html/"$file_id".png ../../exp/bmpsuite-2.5/"$(basename "$(dirname "$file")")"/"$file_id".png
+done
+
+cd ../../out || exit
+[ -d bmpsuite-2.5/ ] || mkdir bmpsuite-2.5/ && cd bmpsuite-2.5/ && mkdir b/ g/ q/
