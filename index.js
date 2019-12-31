@@ -8,6 +8,9 @@ const argv = yargs
     .default('d', 'samples/out/')
     .option('l', {description: 'a text file where to log failed images'})
     .alias('l', 'failedlog')
+    .option('v', {description: 'dump some additional debugging info about the BMP structure', type: "boolean"})
+    .alias('v', 'verbose')
+    .default('v', false)
     .argv;
 
 const fs = require('fs');
@@ -21,8 +24,8 @@ const PNG = require('pngjs').PNG;
 if (argv._.length > 0) {
     const failedImages = [];
     const handleError = (fileName, e) => {
-                console.log('ERROR: ', e.message);
-                console.log(e.stack);
+        console.log('ERROR: ', e.message);
+        console.log(e.stack);
         failedImages.push(
             `${fileName}: ${e.message}`
         );
@@ -46,8 +49,10 @@ if (argv._.length > 0) {
                 return;
             }
 
-            const dibHdr = utils.getOwnPropsFromStruct(bmp.dibInfo.header, true);
-            console.dir(dibHdr, {depth: null});
+            if (argv.verbose) {
+                const dibHdr = utils.getOwnPropsFromStruct(bmp.dibInfo.header, true);
+                console.dir(dibHdr, {depth: null});
+            }
 
             let comprType;
             try {
@@ -55,27 +60,19 @@ if (argv._.length > 0) {
             } catch (e) {
                 handleError(fileName, e);
                 return;
-                }
-
-            console.log('compression:', typeof comprType === 'number' ? Compression[comprType] : 'UNKNOWN');
-            if (comprType !== Compression.JPEG && comprType !== Compression.PNG && bmp.dibInfo.header.usesFixedPalette) {
-                console.log(`Number of colors in palette: ${bmp.dibInfo.colorTable.colors.length}`);
-                const byteToHex = b => b.toString(16).padStart(2, '0');
-                console.log(bmp.dibInfo.colorTable.colors.map(c => '#' + [c.red, c.green, c.blue].map(byteToHex).join('')));
             }
 
-            const chars = '.\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
-            const width = bmp.dibInfo.header.imageWidth;
-
-            for (let y = 0; y < bmp.dibInfo.header.imageHeight; y++) {
-                let line = '';
-                for (let x = 0; x < width; x++) {
-                    const i = (width * y + x) * 4;
-                    const [r, g, b] = [bmp.bitmap.data[i], bmp.bitmap.data[i + 1], bmp.bitmap.data[i + 2]];
-                    const brightness = utils.getPercievedBrightnessFromRgb(r, g, b) / 255;
-                    line += chars[Math.round(brightness * (chars.length - 1))];
+            if (argv.verbose) {
+                console.log('compression:', typeof comprType === 'number' ? Compression[comprType] : 'UNKNOWN');
+                if (comprType !== Compression.JPEG && comprType !== Compression.PNG && bmp.dibInfo.header.usesFixedPalette) {
+                    console.log(`Number of colors in palette: ${bmp.dibInfo.colorTable.colors.length}`);
+                    const byteToHex = b => b.toString(16).padStart(2, '0');
+                    console.log(bmp.dibInfo.colorTable.colors.map(c => '#' + [c.red, c.green, c.blue].map(byteToHex).join('')));
                 }
-                console.log(line);
+            }
+
+            if (argv.verbose) {
+                utils.dumpBitmap(bmp);
             }
 
             const png = new PNG({width: bmp.dibInfo.header.imageWidth, height: bmp.dibInfo.header.imageHeight});

@@ -38,6 +38,24 @@ const getPixelColorFromBitmap = (x, y, bitmap) => {
     return [bitmap.data[i], bitmap.data[i + 1], bitmap.data[i + 2], bitmap.data[i + 3]];
 };
 
+const dumpBitmap = (bmp) => {
+    const chars = ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
+
+    const height = bmp.dibInfo.header.imageHeight;
+    const width = bmp.dibInfo.header.imageWidth;
+
+    for (let y = 0; y < height; y++) {
+        let line = '';
+        for (let x = 0; x < width; x++) {
+            const [r, g, b, a] = getPixelColorFromBitmap(x, y, bmp.bitmap);
+            const brightness = (getPercievedBrightnessFromRgb(r, g, b) * (a / 255)) / 255;
+            line += chars[Math.round(brightness * (chars.length - 1))];
+        }
+        console.log(line);
+    }
+};
+
 exports.getOwnPropsFromStruct = getOwnPropsFromStruct;
 exports.getPercievedBrightnessFromRgb = getPercievedBrightnessFromRgb;
 exports.getPixelColorFromBitmap = getPixelColorFromBitmap;
+exports.dumpBitmap = dumpBitmap;

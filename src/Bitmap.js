@@ -69,7 +69,6 @@ class Bitmap {
                 multiplier: 255 / (mask >>> bitShift)
             };
         });
-        console.log(this._m_colorMasks);
     }
 
     resolveColorFromPalette(idx) {
