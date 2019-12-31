@@ -74,10 +74,13 @@ class Bitmap {
 
     resolveColorFromPalette(idx) {
         const color = this.bmp.dibInfo.colorTable.colors[idx];
+        if (!color) {
+            return [0, 0, 0, 255];
+        }
         return [color.red, color.green, color.blue, 255];
     }
 
-    /** @see {@link this.resolveColorMasksBitShift} has to be called before */
+    /** @see {@link this.resolveColorMasks} has to be called before */
     resolveColorFromPixel(val) {
         const c = this._m_colorMasks.map(({mask, bitShift, multiplier}, idx) => {
             if (idx === 3 && !mask) {
@@ -98,7 +101,7 @@ class Bitmap {
             case Compresssion.BITFIELDS:
             case Compresssion.ALPHA_BITFIELDS:
                 const bitsPerPx = hdr.bitsPerPixel;
-                    console.log('bits/pixel:', bitsPerPx);
+                console.log('bits/pixel:', bitsPerPx);
                 console.log('current pos:', this._io.pos);
                 console.log('available size:', this._io.size - this._io.pos);
                 console.log('calculated size:', this.getLenRgbBitmap());
