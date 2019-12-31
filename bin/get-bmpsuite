@@ -2,7 +2,12 @@
 
 BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zip
 
-rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/* samples/exp/bmpsuite-2.5/*
+rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/*
+for dir in samples/exp/bmpsuite-2.5/*
+do
+    [ ! -d "$dir" ] || [ `basename $dir` == "override" ] && continue
+    rm -vrf "$dir"
+done
 
 tmpfile=`mktemp`
 curl "$BMPSUITE_ZIP_URL" -o "$tmpfile"
@@ -12,44 +17,48 @@ unzip "$tmpfile" -d samples/exp 'bmpsuite-2.5/html/*.png'
 cd samples/exp/bmpsuite-2.5
 mkdir b/ g/ q/
 
-# TODO: maybe create symlinks instead
-cp html/pal1.png g/pal1wb.png
-cp html/pal1.png q/pal1huff.png
-cp html/pal4.png g/pal4rle.png
-cp html/pal8.png g/pal8-0.png
-cp html/pal8.png g/pal8os2.png
-cp html/pal8.png g/pal8rle.png
-cp html/pal8.png g/pal8topdown.png
-cp html/pal8.png g/pal8v4.png
-cp html/pal8.png g/pal8v5.png
-cp html/pal8.png q/pal8offs.png
-cp html/pal8.png q/pal8os2-hs.png
-cp html/pal8.png q/pal8os2-sz.png
-cp html/pal8.png q/pal8os2sp.png
-cp html/pal8.png q/pal8os2v2-16.png
-cp html/pal8.png q/pal8os2v2-40sz.png
-cp html/pal8.png q/pal8os2v2-sz.png
-cp html/pal8.png q/pal8os2v2.png
-cp html/pal8.png q/pal8oversizepal.png
-cp html/rgb16-565.png g/rgb16-565pal.png
-cp html/rgb16.png g/rgb16bfdef.png
-cp html/rgb24.png g/rgb24pal.png
-cp html/rgb24.png g/rgb32.png
-cp html/rgb24.png g/rgb32bf.png
-cp html/rgb24.png g/rgb32bfdef.png
-cp html/rgb24.png q/rgb24largepal.png
-cp html/rgb24.png q/rgb24lprof.png
-cp html/rgb24.png q/rgb24png.png
-cp html/rgb24.png q/rgb24prof.png
-cp html/rgb24.png q/rgb24prof2.png
-cp html/rgb24.png q/rgb32-111110.png
-cp html/rgb24.png q/rgb32-xbgr.png
-cp html/rgb24.png q/rgb32fakealpha.png
-cp html/rgb24.png q/rgb32h52.png
-cp html/rgba32.png q/rgba32abf.png
-cp html/rgba32.png q/rgba32h56.png
+cp -v -f override/*.png html/
 
-cd ../../in/bmpsuite-2.5
+# TODO: maybe create symlinks instead
+cd html/
+
+cp pal1.png pal1wb.png
+cp pal1.png pal1huff.png
+cp pal4.png pal4rle.png
+cp pal8.png pal8-0.png
+cp pal8.png pal8os2.png
+cp pal8.png pal8rle.png
+cp pal8.png pal8topdown.png
+cp pal8.png pal8v4.png
+cp pal8.png pal8v5.png
+cp pal8.png pal8offs.png
+cp pal8.png pal8os2-hs.png
+cp pal8.png pal8os2-sz.png
+cp pal8.png pal8os2sp.png
+cp pal8.png pal8os2v2-16.png
+cp pal8.png pal8os2v2-40sz.png
+cp pal8.png pal8os2v2-sz.png
+cp pal8.png pal8os2v2.png
+cp pal8.png pal8oversizepal.png
+cp rgb16-565.png rgb16-565pal.png
+cp rgb16.png rgb16bfdef.png
+cp rgb24.png rgb24pal.png
+cp rgb24.png rgb32.png
+cp rgb24.png rgb32bf.png
+cp rgb24.png rgb32bfdef.png
+cp rgb24.png rgb24largepal.png
+cp rgb24.png rgb24lprof.png
+cp rgb24.png rgb24png.png
+cp rgb24.png rgb24prof.png
+cp rgb24.png rgb24prof2.png
+cp rgb24.png rgb32-111110.png
+cp rgb24.png rgb32-xbgr.png
+cp rgb24.png rgb32fakealpha.png
+cp rgb24.png rgb32h52.png
+cp rgba32.png rgba32abf.png
+cp rgba32.png rgba32h56.png
+
+cd ../../../in/bmpsuite-2.5
 for file in */*.bmp
 do
     file_id=`basename $file .bmp`
