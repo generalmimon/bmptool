@@ -411,7 +411,7 @@ types:
       - id: colors
         type: rgb_record(has_reserved_field)
         repeat: expr
-        repeat-expr: 'colors_num < present_colors_num ? colors_num : present_colors_num'
+        repeat-expr: 'colors_num > 0 and colors_num < present_colors_num ? colors_num : present_colors_num'
     instances:
       present_colors_num:
         value: '_io.size / (has_reserved_field ? 4 : 3)'
