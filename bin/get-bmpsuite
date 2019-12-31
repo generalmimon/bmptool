@@ -5,22 +5,22 @@ BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zi
 rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/*
 for dir in samples/exp/bmpsuite-2.5/*
 do
-    [ ! -d "$dir" ] || [ `basename $dir` == "override" ] && continue
+    [ ! -d "$dir" ] || [ "$(basename "$dir")" = "override" ] && continue
     rm -vrf "$dir"
 done
 
-tmpfile=`mktemp`
+tmpfile=$(mktemp)
 curl "$BMPSUITE_ZIP_URL" -o "$tmpfile"
 unzip "$tmpfile" -d samples/in 'bmpsuite-2.5/b/*.bmp' 'bmpsuite-2.5/g/*.bmp' 'bmpsuite-2.5/q/*.bmp'
 unzip "$tmpfile" -d samples/exp 'bmpsuite-2.5/html/*.png'
 
-cd samples/exp/bmpsuite-2.5
+cd samples/exp/bmpsuite-2.5 || exit
 mkdir b/ g/ q/
 
 cp -v -f override/*.png html/
 
 # TODO: maybe create symlinks instead
-cd html/
+cd html/ || exit
 
 cp pal1.png pal1wb.png
 cp pal1.png pal1huff.png
@@ -58,12 +58,12 @@ cp rgb24.png rgb32h52.png
 cp rgba32.png rgba32abf.png
 cp rgba32.png rgba32h56.png
 
-cd ../../../in/bmpsuite-2.5
+cd ../../../in/bmpsuite-2.5 || exit
 for file in */*.bmp
 do
-    file_id=`basename $file .bmp`
-    [ -f ../../exp/bmpsuite-2.5/html/$file_id.png ] && mv -v ../../exp/bmpsuite-2.5/html/$file_id.png ../../exp/bmpsuite-2.5/$(basename $(dirname $file))/$file_id.png
+    file_id=$(basename "$file" .bmp)
+    [ -f ../../exp/bmpsuite-2.5/html/"$file_id".png ] && mv -v ../../exp/bmpsuite-2.5/html/"$file_id".png ../../exp/bmpsuite-2.5/"$(basename "$(dirname "$file")")"/"$file_id".png
 done
 
-cd ../../out
+cd ../../out || exit
 [ -d bmpsuite-2.5/ ] || mkdir bmpsuite-2.5/ && cd bmpsuite-2.5/ && mkdir b/ g/ q/

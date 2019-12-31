@@ -1,9 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
-cd samples/out
+cd samples/out || exit
 shopt -s globstar
 for file in **/*.png
 do
-    mkdir ../diff/`dirname $file` -p
+    mkdir ../diff/"$(dirname "$file")" -p
     npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
 done
+shopt -u globstar
