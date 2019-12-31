@@ -6,6 +6,8 @@ const argv = yargs
     .option('d', {description: 'output directory for generated PNG images'})
     .alias('d', 'outdir')
     .default('d', 'samples/out/')
+    .option('l', {description: 'a text file where to log failed images'})
+    .alias('l', 'failedlog')
     .argv;
 
 const fs = require('fs');
@@ -13,16 +15,23 @@ const path = require('path');
 const KaitaiStream = require('kaitai-struct/KaitaiStream');
 const Compression = require('./src/enum').Compression;
 const utils = require('./src/utils');
-const UnknownCompressionError = require('./src/exception').UnknownCompressionError;
 
 const PNG = require('pngjs').PNG;
 
 if (argv._.length > 0) {
-    argv._.forEach(fileName => {
-        fs.readFile(fileName, (err, data) => {
-            if (err) {
+    const failedImages = [];
+    const handleError = (fileName, e) => {
                 console.log('ERROR: ', e.message);
                 console.log(e.stack);
+        failedImages.push(
+            `${fileName}: ${e.message}`
+        );
+    };
+
+    argv._.forEach((fileName, idx) => {
+        fs.readFile(fileName, (err, data) => {
+            if (err) {
+                handleError(fileName, err);
                 return;
             }
             console.log(`${fileName}`);
@@ -33,8 +42,7 @@ if (argv._.length > 0) {
             try {
                 bmp = new Bmp(new KaitaiStream(data));
             } catch (e) {
-                console.log('ERROR: ', e.message);
-                console.log(e.stack);
+                handleError(fileName, e);
                 return;
             }
 
@@ -45,12 +53,9 @@ if (argv._.length > 0) {
             try {
                 comprType = bmp.bitmap.getCompression();
             } catch (e) {
-                if (e instanceof UnknownCompressionError) {
-                    console.warn(e.message);
-                } else {
-                    throw e;
+                handleError(fileName, e);
+                return;
                 }
-            }
 
             console.log('compression:', typeof comprType === 'number' ? Compression[comprType] : 'UNKNOWN');
             if (comprType !== Compression.JPEG && comprType !== Compression.PNG && bmp.dibInfo.header.usesFixedPalette) {
@@ -79,5 +84,18 @@ if (argv._.length > 0) {
             png.pack().pipe(fs.createWriteStream(outputFileName));
             console.log(`output PNG: ${outputFileName}`);
         });
+    });
+    let alreadyExecuted = false;
+    process.on('beforeExit', () => {
+        if (alreadyExecuted) return;
+        alreadyExecuted = true;
+        console.log('-'.repeat(60));
+        console.log('Failed images: ');
+        console.log(failedImages.join("\n"));
+        if (failedImages.length > 0 && argv.l) {
+            fs.writeFile(argv.l, failedImages.join("\n") + "\n", {flag: 'a'}, () => {
+                console.log(`successfully written to file ${argv.l}`);
+            });
+        }
     });
 }
