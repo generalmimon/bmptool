@@ -111,9 +111,8 @@ types:
         contents: "BM"
       - id: len_file
         -orig-id: bfSize
-        doc: not reliable, mostly ignored by BMP decoders
-        doc-ref: http://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html q/pal8os2-sz.bmp
         type: u4
+        doc: not reliable, mostly ignored by BMP decoders
       - id: reserved1
         -orig-id: bfReserved1
         type: u2
@@ -132,20 +131,20 @@ types:
         type: u4
       - id: header
         -orig-id: bmciHeader
-        type: bitmap_header(header_size)
         size: header_size - 4
+        type: bitmap_header(header_size)
       - id: color_mask
-        doc: Valid only for BITMAPINFOHEADER, in all headers extending it the masks are contained in the header itself.
-        if: not _io.eof and is_color_mask_here
         type: color_mask(header.bitmap_info_ext.compression == compressions::alpha_bitfields)
+        if: not _io.eof and is_color_mask_here
+        doc: Valid only for BITMAPINFOHEADER, in all headers extending it the masks are contained in the header itself.
       - id: color_table
         -orig-id: bmciColors
-        if: not _io.eof
+        size-eos: true
         type: 'color_table(
             not header.is_core_header,
             header.extends_bitmap_info ? header.bitmap_info_ext.num_colors_used : 0
           )'
-        size-eos: true
+        if: not _io.eof
     instances:
       is_color_mask_here:
         value: >-
@@ -157,11 +156,11 @@ types:
           and (header.bitmap_info_ext.compression == compressions::bitfields or header.bitmap_info_ext.compression == compressions::alpha_bitfields)
           and (is_color_mask_here or header.is_color_mask_here)
       color_mask_given:
-        if: is_color_mask_given
         value: >-
           is_color_mask_here
             ? color_mask
             : header.color_mask
+        if: is_color_mask_given
       color_mask_red:
         value: >-
           is_color_mask_given
@@ -209,44 +208,44 @@ types:
     seq:
       - id: image_width
         -orig-id: biWidth
-        doc: Image width, px
         type:
           switch-on: is_core_header
           cases:
             true: u2
             false: u4
+        doc: Image width, px
       - id: image_height_raw
         -orig-id: biHeight
-        doc: Image height, px (positive => bottom-up image, negative => top-down image)
         type:
           switch-on: is_core_header
           cases:
             true: s2
             false: s4
+        doc: Image height, px (positive => bottom-up image, negative => top-down image)
       - id: num_planes
         -orig-id: biPlanes
-        doc: Number of planes for target device, must be 1
         type: u2
         # valid: 1
+        doc: Number of planes for target device, must be 1
       - id: bits_per_pixel
         -orig-id: biBitCount
-        doc: Number of bits per pixel that image buffer uses (1, 4, 8, 16, 24 or 32)
         type: u2
+        doc: Number of bits per pixel that image buffer uses (1, 4, 8, 16, 24 or 32)
       - id: bitmap_info_ext
-        if: extends_bitmap_info
         type: bitmap_info_extension
+        if: extends_bitmap_info
       - id: color_mask
-        if: is_color_mask_here
         type: color_mask(header_size != header_type::bitmap_v2_info_header.to_i)
+        if: is_color_mask_here
       - id: os2_2x_bitmap_ext
-        if: extends_os2_2x_bitmap
         type: os2_2x_bitmap_extension
+        if: extends_os2_2x_bitmap
       - id: bitmap_v4_ext
-        if: extends_bitmap_v4
         type: bitmap_v4_extension
+        if: extends_bitmap_v4
       - id: bitmap_v5_ext
-        if: extends_bitmap_v5
         type: bitmap_v5_extension
+        if: extends_bitmap_v5
     instances:
       is_core_header:
         value: header_size == header_type::bitmap_core_header.to_i
@@ -275,20 +274,20 @@ types:
     seq:
       - id: compression
         -orig-id: biCompression
-        if: not _parent.extends_os2_2x_bitmap
         type: u4
         enum: compressions
+        if: not _parent.extends_os2_2x_bitmap
       - id: os2_compression
         -orig-id: Compression
-        if: _parent.extends_os2_2x_bitmap
         type: u4
         enum: os2_compressions
+        if: _parent.extends_os2_2x_bitmap
       - id: len_image
         -orig-id: biSizeImage
+        type: u4
         doc: |
           If biCompression is BI_JPEG or BI_PNG, indicates the size of the JPEG or PNG image buffer.
           This may be set to zero for BI_RGB bitmaps.
-        type: u4
       - id: x_resolution
         -orig-id: biXPelsPerMeter
         type: u4
@@ -310,38 +309,38 @@ types:
       - id: reserved
         type: u2
       - id: recording
+        type: u2
+        # valid: 0
         doc: |
           Specifies how the bitmap scan lines are stored.
           The only valid value for this field is 0, indicating that the bitmap is
           stored from left to right and from the bottom up.
-        type: u2
-        # valid: 0
       - id: rendering
-        doc: Specifies the halftoning algorithm used on the bitmap data.
         type: u2
         enum: os2_rendering
+        doc: Specifies the halftoning algorithm used on the bitmap data.
       - id: size1
+        type: u4
         doc: |
           rendering == os2_rendering::error_diffusion
             => error damping as a percentage in the range 0 through 100
           rendering == os2_rendering::panda or rendering == os2_rendering::super_circle
             => X dimension of the pattern used in pixels
-        type: u4
       - id: size2
+        type: u4
         doc: |
           rendering == os2_rendering::error_diffusion
             => not used
           rendering == os2_rendering::panda or rendering == os2_rendering::super_circle
             => Y dimension of the pattern used in pixels
-        type: u4
       - id: color_encoding
+        type: u4
         doc: |
           Specifies the color model used to describe the bitmap data.
           The only valid value is 0, indicating the RGB encoding scheme.
-        type: u4
       - id: identifier
-        doc: Application-specific value
         type: u4
+        doc: Application-specific value
 
   bitmap_v4_extension:
     -orig-id: BITMAPV4HEADER
@@ -351,11 +350,12 @@ types:
         -orig-id: bV4CSType
         type: u4
         enum: color_space
-      - id: endpoints
-        -orig-id: bV4Endpoints
+      - id: endpoint_red
         type: cie_xyz
-        repeat: expr
-        repeat-expr: 3
+      - id: endpoint_green
+        type: cie_xyz
+      - id: endpoint_blue
+        type: cie_xyz
       - id: gamma_red
         -orig-id: bV4GammaRed
         type: fixed_point_16_dot_16
@@ -378,6 +378,8 @@ types:
         type: fixed_point_2_dot_30
 
   bitmap_v5_extension:
+    meta:
+      encoding: windows-1252 # for the file name of linked profile (see profile_data below)
     -orig-id: BITMAPV5HEADER
     doc-ref: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapv5header
     seq:
@@ -395,15 +397,12 @@ types:
       - id: reserved
         -orig-id: bV5Reserved
         type: u4
-    meta:
-      encoding: windows-1252 # for the file name of linked profile
     instances:
       has_profile:
         value: >-
           _parent.bitmap_v4_ext.color_space_type == color_space::profile_linked
           or _parent.bitmap_v4_ext.color_space_type == color_space::profile_embedded
       profile_data:
-        if: has_profile
         io: _root._io
         pos: 14 + ofs_profile # 14 = _root.file_header._sizeof
         size: len_profile
@@ -411,6 +410,7 @@ types:
           switch-on: _parent.bitmap_v4_ext.color_space_type == color_space::profile_linked
           cases:
             true: strz
+        if: has_profile
         doc-ref: https://docs.microsoft.com/cs-cz/previous-versions/windows/desktop/wcs/using-structures-in-wcs-1-0 "If the profile is embedded,
           profile data is the actual profile, and if it is linked, the profile data is the
           null-terminated file name of the profile. This cannot be a Unicode string. It must be composed exclusively
@@ -420,7 +420,7 @@ types:
     params:
       - id: has_reserved_field
         type: bool
-      - id: colors_num
+      - id: num_colors
         doc: |
           If equal to 0, the pallete should contain as many colors as can fit into the pixel value
           according to the `bits_per_pixel` field (if `bits_per_pixel` = 8, then the pixel can
@@ -431,9 +431,9 @@ types:
       - id: colors
         type: rgb_record(has_reserved_field)
         repeat: expr
-        repeat-expr: 'colors_num > 0 and colors_num < present_colors_num ? colors_num : present_colors_num'
+        repeat-expr: 'num_colors > 0 and num_colors < num_colors_present ? num_colors : num_colors_present'
     instances:
-      present_colors_num:
+      num_colors_present:
         value: '_io.size / (has_reserved_field ? 4 : 3)'
   color_mask:
     params:
