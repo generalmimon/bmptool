@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zip
 
