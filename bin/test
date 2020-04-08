@@ -2,6 +2,10 @@
 
 cd samples/out || exit
 shopt -s globstar
+
+passed=0
+failed=0
+not_exist=0
 for file in **/*.png
 do
     mkdir ../diff/"$(dirname "$file")" -p
@@ -10,8 +14,16 @@ do
         echo "[SAMPLE] ../exp/$file"
     else
         echo "[ERROR] ../exp/$file does not exist"
+        ((not_exist++))
         continue
     fi
     npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
+    if [ $? -eq 0 ]; then
+        ((passed++))
+    else
+        ((failed++))
+    fi
 done
 shopt -u globstar
+echo "Passed: $passed, failed: $failed, not available: $not_exist"
+[ "$failed" -ne 0 ] && exit 1 || exit 0
