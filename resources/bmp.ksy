@@ -16,7 +16,7 @@ meta:
     wikidata: Q192869
   endian: le
   license: CC0-1.0
-  ks-version: 0.8
+  ks-version: 0.9
   ks-opaque-types: true
 doc: |
   The **BMP file format**, also known as **bitmap image file** or **device independent
@@ -91,17 +91,21 @@ doc: |
       * BITMAPV4HEADER (WIN4XBITMAPHEADER)
 
 seq:
-  - id: file_header
+  - id: file_hdr
     type: file_header
   - id: dib_info
-    size: file_header.ofs_bitmap - 14 # 14 = file_header._sizeof (TODO: replace when KSC 0.9 is released)
+    size: file_hdr.ofs_bitmap - file_hdr._sizeof
     type: bitmap_info
   - id: bitmap
     type: bitmap
     size-eos: true
 types:
   # bitmap:
-  #   doc: Replace with an opaque type if you care about the pixels.
+  #   doc: |
+  #     Replace with an opaque type if you care about the pixels.
+  #     You can look at an example of a JavaScript implementation: https://github.com/generalmimon/bmptool/blob/master/src/Bitmap.js
+
+  #     There is a proposal for adding bitmap data type to Kaitai Struct: https://github.com/kaitai-io/kaitai_struct/issues/188
   file_header:
     -orig-id: BITMAPFILEHEADER
     doc-ref: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapfileheader
@@ -125,14 +129,14 @@ types:
         doc: Offset to actual raw pixel data of the image
   bitmap_info:
     -orig-id: BITMAPINFO
-    doc-ref: https://docs.microsoft.com/cs-cz/windows/win32/api/wingdi/ns-wingdi-bitmapinfo
+    doc-ref: https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfo
     seq:
-      - id: header_size
+      - id: len_header
         type: u4
       - id: header
         -orig-id: bmciHeader
-        size: header_size - 4
-        type: bitmap_header(header_size)
+        size: len_header - 4
+        type: bitmap_header(len_header)
       - id: color_mask
         type: color_mask(header.bitmap_info_ext.compression == compressions::alpha_bitfields)
         if: not _io.eof and is_color_mask_here
@@ -148,7 +152,7 @@ types:
     instances:
       is_color_mask_here:
         value: >-
-          header.header_size == header_type::bitmap_info_header.to_i
+          header.len_header == header_type::bitmap_info_header.to_i
             and (header.bitmap_info_ext.compression == compressions::bitfields or header.bitmap_info_ext.compression == compressions::alpha_bitfields)
       is_color_mask_given:
         value: >-
@@ -200,10 +204,10 @@ types:
       - BITMAPCOREHEADER
       - OS21XBITMAPHEADER
     doc-ref:
-      - https://docs.microsoft.com/cs-cz/windows/win32/api/wingdi/ns-wingdi-bitmapcoreheader
+      - https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapcoreheader
       - https://www.fileformat.info/format/os2bmp/egff.htm#OS2BMP-DMYID.3.1
     params:
-      - id: header_size
+      - id: len_header
         type: u4
     seq:
       - id: image_width
@@ -235,7 +239,7 @@ types:
         type: bitmap_info_extension
         if: extends_bitmap_info
       - id: color_mask
-        type: color_mask(header_size != header_type::bitmap_v2_info_header.to_i)
+        type: color_mask(len_header != header_type::bitmap_v2_info_header.to_i)
         if: is_color_mask_here
       - id: os2_2x_bitmap_ext
         type: os2_2x_bitmap_extension
@@ -248,22 +252,22 @@ types:
         if: extends_bitmap_v5
     instances:
       is_core_header:
-        value: header_size == header_type::bitmap_core_header.to_i
+        value: len_header == header_type::bitmap_core_header.to_i
       extends_bitmap_info:
-        value: header_size >= header_type::bitmap_info_header.to_i
+        value: len_header >= header_type::bitmap_info_header.to_i
       extends_os2_2x_bitmap:
-        value: header_size == header_type::os2_2x_bitmap_header.to_i
+        value: len_header == header_type::os2_2x_bitmap_header.to_i
       extends_bitmap_v4:
-        value: header_size >= header_type::bitmap_v4_header.to_i
+        value: len_header >= header_type::bitmap_v4_header.to_i
       extends_bitmap_v5:
-        value: header_size >= header_type::bitmap_v5_header.to_i
+        value: len_header >= header_type::bitmap_v5_header.to_i
       image_height:
         value: 'image_height_raw < 0 ? -image_height_raw : image_height_raw'
       bottom_up:
         value: image_height_raw > 0
       is_color_mask_here:
-        value: header_size == header_type::bitmap_v2_info_header.to_i
-          or header_size == header_type::bitmap_v3_info_header.to_i
+        value: len_header == header_type::bitmap_v2_info_header.to_i
+          or len_header == header_type::bitmap_v3_info_header.to_i
           or extends_bitmap_v4
       uses_fixed_palette:
         value: not (bits_per_pixel == 16 or bits_per_pixel == 24 or bits_per_pixel == 32)
@@ -404,14 +408,14 @@ types:
           or _parent.bitmap_v4_ext.color_space_type == color_space::profile_embedded
       profile_data:
         io: _root._io
-        pos: 14 + ofs_profile # 14 = _root.file_header._sizeof
+        pos: _root.file_hdr._sizeof + ofs_profile
         size: len_profile
         type:
           switch-on: _parent.bitmap_v4_ext.color_space_type == color_space::profile_linked
           cases:
             true: strz
         if: has_profile
-        doc-ref: https://docs.microsoft.com/cs-cz/previous-versions/windows/desktop/wcs/using-structures-in-wcs-1-0 "If the profile is embedded,
+        doc-ref: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/wcs/using-structures-in-wcs-1-0 "If the profile is embedded,
           profile data is the actual profile, and if it is linked, the profile data is the
           null-terminated file name of the profile. This cannot be a Unicode string. It must be composed exclusively
           of characters from the Windows character set (code page 1252)."
