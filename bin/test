@@ -5,6 +5,13 @@ shopt -s globstar
 for file in **/*.png
 do
     mkdir ../diff/"$(dirname "$file")" -p
+    if [ -f ../exp/"$file" ]
+    then
+        echo "[SAMPLE] ../exp/$file"
+    else
+        echo "[ERROR] ../exp/$file does not exist"
+        continue
+    fi
     npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
 done
 shopt -u globstar
