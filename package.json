@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm run build",
     "build": "node ksc.js -d src resources/bmp.ksy"
   },
   "author": "",
