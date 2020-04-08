@@ -26,6 +26,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build --if-present
-    - run: npm test
+    - run: bin/get-bmpsuite
+    - run: node index.js samples/in/bmpsuite-2.5/g/*.bmp -d samples/out/bmpsuite-2.5/g/
+    - run: node index.js samples/in/bmpsuite-2.5/q/*.bmp -d samples/out/bmpsuite-2.5/q/
+    - run: node index.js samples/in/bmpsuite-2.5/b/*.bmp -d samples/out/bmpsuite-2.5/b/
+    - run: bin/test
       env:
         CI: true
