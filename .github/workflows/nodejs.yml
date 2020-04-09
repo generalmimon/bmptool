@@ -26,8 +26,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: npm run build --if-present
-    - run: git clone --branch 2.6 --depth 1 https://github.com/jsummers/bmpsuite.git && cd bmpsuite/
-    - run: make clean && make check && cd ../
+    - run: git clone --branch 2.6 --depth 1 https://github.com/jsummers/bmpsuite.git
+    - run: cd bmpsuite/ && make clean && make check && cd ../
       env:
         CC: gcc
     - run: ./bin/get-bmpsuite
