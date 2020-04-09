@@ -1,20 +1,17 @@
 #!/bin/bash
 
-BMPSUITE_ZIP_URL=https://entropymine.com/jason/bmpsuite/releases/bmpsuite-2.5.zip
-
-rm -rf samples/diff/bmpsuite-2.5/* samples/in/bmpsuite-2.5/* samples/out/bmpsuite-2.5/*
-for dir in samples/exp/bmpsuite-2.5/*
+rm -rf samples/diff/bmpsuite/ samples/in/bmpsuite/ samples/out/bmpsuite/
+for dir in samples/exp/bmpsuite/*
 do
     [ ! -d "$dir" ] || [ "$(basename "$dir")" = "override" ] && continue
     rm -vrf "$dir"
 done
 
-tmpfile=$(mktemp)
-curl "$BMPSUITE_ZIP_URL" -o "$tmpfile"
-unzip "$tmpfile" -d samples/in 'bmpsuite-2.5/b/*.bmp' 'bmpsuite-2.5/g/*.bmp' 'bmpsuite-2.5/q/*.bmp'
-unzip "$tmpfile" -d samples/exp 'bmpsuite-2.5/html/*.png'
+mkdir -p samples/in/bmpsuite/ samples/out/bmpsuite/ samples/exp/bmpsuite/html/
+cp -r -t samples/in/bmpsuite/ bmpsuite/b/ bmpsuite/g/ bmpsuite/q/
+cp -r -t samples/exp/bmpsuite/html/ bmpsuite/html/*.png
 
-cd samples/exp/bmpsuite-2.5 || exit
+cd samples/exp/bmpsuite || exit
 mkdir b/ g/ q/
 
 cp -v -f override/*.png html/
@@ -58,12 +55,12 @@ cp rgb24.png rgb32h52.png
 cp rgba32.png rgba32abf.png
 cp rgba32.png rgba32h56.png
 
-cd ../../../in/bmpsuite-2.5 || exit
+cd ../../../in/bmpsuite || exit
 for file in */*.bmp
 do
     file_id=$(basename "$file" .bmp)
-    [ -f ../../exp/bmpsuite-2.5/html/"$file_id".png ] && mv -v ../../exp/bmpsuite-2.5/html/"$file_id".png ../../exp/bmpsuite-2.5/"$(basename "$(dirname "$file")")"/"$file_id".png
+    [ -f ../../exp/bmpsuite/html/"$file_id".png ] && mv -v ../../exp/bmpsuite/html/"$file_id".png ../../exp/bmpsuite/"$(basename "$(dirname "$file")")"/"$file_id".png
 done
 
 cd ../../out || exit
-[ -d bmpsuite-2.5/ ] || mkdir bmpsuite-2.5/ && cd bmpsuite-2.5/ && mkdir b/ g/ q/
+mkdir bmpsuite/b/ bmpsuite/g/ bmpsuite/q/
