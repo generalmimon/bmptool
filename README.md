@@ -66,9 +66,9 @@ I made a simple shell script that downloads samples from [BMP Suite](https://ent
 Then you need to run the BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the file basename while generating output files, so it's necessary to process each folder (g/, q/ and b/) independently:
 
 ```sh
-node index.js samples/in/bmpsuite-2.5/g/*.bmp -d samples/out/bmpsuite-2.5/g/
-node index.js samples/in/bmpsuite-2.5/q/*.bmp -d samples/out/bmpsuite-2.5/q/
-node index.js samples/in/bmpsuite-2.5/b/*.bmp -d samples/out/bmpsuite-2.5/b/
+node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/
+node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/
+node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/
 ```
 
 If you want to log the parse exceptions with the .bmp filenames, add `-l log/failed.log` to the end.
