@@ -31,9 +31,9 @@ jobs:
       env:
         CC: gcc
     - run: ./bin/get-bmpsuite
-    - run: node index.js samples/in/bmpsuite-2.5/g/*.bmp -d samples/out/bmpsuite-2.5/g/
-    - run: node index.js samples/in/bmpsuite-2.5/q/*.bmp -d samples/out/bmpsuite-2.5/q/
-    - run: node index.js samples/in/bmpsuite-2.5/b/*.bmp -d samples/out/bmpsuite-2.5/b/
+    - run: node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/
+    - run: node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/
+    - run: node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/
     - run: ./bin/test
       env:
         CI: true
