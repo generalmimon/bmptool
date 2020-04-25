@@ -139,6 +139,55 @@ class Bitmap {
                 }
                 console.log('end pos:', this._io.pos);
                 break;
+            // case Compresssion.RLE4:
+            case Compresssion.RLE8:
+                const END_OF_LINE = 0;
+                const END_OF_BITMAP = 1;
+                const DELTA = 2;
+
+                let x = 0;
+                let y = hdr.imageHeight - 1;
+                while (x < hdr.imageWidth + 1 && y >= 0) {
+                    const count = this._io.readU1();
+                    const code = this._io.readU1();
+                    if (!count) {
+                        console.log(y);
+                        switch (code) {
+                            case END_OF_LINE: {
+                                x = 0;
+                                y--;
+                                break;
+                            }
+                            case END_OF_BITMAP: {
+                                return;
+                            }
+                            case DELTA: {
+                                x += this._io.readU1();
+                                y -= this._io.readU1();
+                                break;
+                            }
+                            default: { // Absolute mode
+                                for (let j = 0; j < code; j++) {
+                                    const i = (hdr.imageWidth * y + x) * 4;
+                                    const px = this._io.readBitsInt(8);
+                                    [this.data[i], this.data[i + 1], this.data[i + 2], this.data[i + 3]] = this.resolveColorFromPalette(px);
+                                    x++; // FIXME: handle line overflow
+                                }
+                                this._io.seek(Math.ceil(this._io.pos / 2) * 2);
+                                break;
+                            }
+                        }
+                    } else { // Encoded mode
+                        const color = this.resolveColorFromPalette(code);
+                        for (let j = 0; j < count; j++) {
+                            const i = (hdr.imageWidth * y + x) * 4;
+                            [this.data[i], this.data[i + 1], this.data[i + 2], this.data[i + 3]] = color;
+                            x++; // FIXME: handle line overflow
+                        }
+                    }
+                    console.log(x, y);
+                }
+                break;
         }
     }
 
