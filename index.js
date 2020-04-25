@@ -7,7 +7,7 @@ const argv = yargs
     .alias('d', 'outdir')
     .default('d', 'samples/out/')
     .option('l', {description: 'a text file where to log failed images'})
-    .alias('l', 'failedlog')
+    .alias('l', 'log-failed')
     .option('v', {description: 'dump some additional debugging info about the BMP structure', type: "boolean"})
     .alias('v', 'verbose')
     .default('v', false)
