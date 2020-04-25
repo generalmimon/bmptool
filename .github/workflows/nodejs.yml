@@ -31,9 +31,14 @@ jobs:
       env:
         CC: gcc
     - run: ./bin/get-bmpsuite
-    - run: node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/
-    - run: node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/
-    - run: node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/
+    - run: node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/ -l log/failed.log
+    - run: node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/ -l log/failed.log
+    - run: node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/ -l log/failed.log
+    - name: Upload the log of failed BMP samples
+      uses: actions/upload-artifact@v1
+      with:
+        name: failed-samples-log
+        path: log/failed.log
     - run: ./bin/test
       env:
         CI: true
