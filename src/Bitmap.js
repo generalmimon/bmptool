@@ -137,7 +137,6 @@ class Bitmap {
                     this._io.alignToByte();
                     this._io.seek(Math.ceil(this._io.pos / 4) * 4);
                 }
-                console.log('end pos:', this._io.pos);
                 break;
             // case Compresssion.RLE4:
             case Compresssion.RLE8:
@@ -151,7 +150,6 @@ class Bitmap {
                     const count = this._io.readU1();
                     const code = this._io.readU1();
                     if (!count) {
-                        console.log(y);
                         switch (code) {
                             case END_OF_LINE: {
                                 x = 0;
@@ -185,7 +183,6 @@ class Bitmap {
                             x++; // FIXME: handle line overflow
                         }
                     }
-                    console.log(x, y);
                 }
                 break;
         }
