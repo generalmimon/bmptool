@@ -1,4 +1,4 @@
-const Compresssion = require('./enum').Compression;
+const Compression = require('./enum').Compression;
 const UnknownCompressionError = require('./exception').UnknownCompressionError;
 const InvalidBitMaskError = require('./exception').InvalidBitMaskError;
 
@@ -15,7 +15,7 @@ class Bitmap {
     getCompression() {
         const Bmp = require('./Bmp');
         if (!this.bmp.dibInfo.header.extendsBitmapInfo) {
-            return Compresssion.RGB;
+            return Compression.RGB;
         }
         const biExt = this.bmp.dibInfo.header.bitmapInfoExt;
         if (this.bmp.dibInfo.header.extendsOs22xBitmap) {
@@ -23,14 +23,14 @@ class Bitmap {
             if (typeof os2ComprType !== 'string') {
                 throw new UnknownCompressionError(`Unknown OS/2 bitmap compression: ${biExt.os2Compression}`);
             }
-            return Compresssion[os2ComprType];
+            return Compression[os2ComprType];
         }
 
         const comprType = Bmp.Compressions[biExt.compression];
         if (typeof comprType !== 'string') {
             throw new UnknownCompressionError(`Unknown bitmap compression: ${biExt.compression}`);
         }
-        return Compresssion[comprType];
+        return Compression[comprType];
     }
 
     getBitmapPixelCount() {
@@ -79,7 +79,7 @@ class Bitmap {
         return [color.red, color.green, color.blue, 255];
     }
 
-    /** @see {@link this.resolveColorMasks} has to be called before */
+    /** @see {@link resolveColorMasks} has to be called before */
     resolveColorFromPixel(val) {
         const c = this._m_colorMasks.map(({mask, bitShift, multiplier}, idx) => {
             if (idx === 3 && !mask) {
@@ -96,9 +96,9 @@ class Bitmap {
         const comprType = this.getCompression();
 
         switch (comprType) {
-            case Compresssion.RGB:
-            case Compresssion.BITFIELDS:
-            case Compresssion.ALPHA_BITFIELDS:
+            case Compression.RGB:
+            case Compression.BITFIELDS:
+            case Compression.ALPHA_BITFIELDS:
                 const bitsPerPx = hdr.bitsPerPixel;
                 console.log('bits/pixel:', bitsPerPx);
                 console.log('current pos:', this._io.pos);
@@ -138,8 +138,8 @@ class Bitmap {
                     this._io.seek(Math.ceil(this._io.pos / 4) * 4);
                 }
                 break;
-            // case Compresssion.RLE4:
-            case Compresssion.RLE8:
+            // case Compression.RLE4:
+            case Compression.RLE8:
                 const END_OF_LINE = 0;
                 const END_OF_BITMAP = 1;
                 const DELTA = 2;
