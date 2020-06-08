@@ -3,27 +3,55 @@
 cd samples/out || exit
 shopt -s globstar
 
-passed=0
-failed=0
-not_exist=0
+declare -a passed
+declare -a failed
+declare -a not_exist
+
+add_test_status () {
+  if [[ $2 == "passed" ]]
+  then
+    passed+=("$1")
+  elif [[ $2 == "failed" ]]
+  then
+    failed+=("$1")
+  else
+    not_exist+=("$1")
+  fi
+}
+
 for file in **/*.png
 do
     mkdir ../diff/"$(dirname "$file")" -p
+    status="failed"
     if [ -f ../exp/"$file" ]
     then
         echo "[SAMPLE] ../exp/$file"
     else
         echo "[ERROR] ../exp/$file does not exist"
-        ((not_exist++))
+        add_test_status "$file" "not_exist"
         continue
     fi
     npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
     if [ $? -eq 0 ]; then
-        ((passed++))
-    else
-        ((failed++))
+        status="passed"
     fi
+    add_test_status "$file" "$status"
 done
 shopt -u globstar
-echo "Passed: $passed, failed: $failed, not available: $not_exist"
-[ "$failed" -ne 0 ] && exit 1 || exit 0
+
+echo "Passed (${#passed[@]}):"
+for name in "${!passed[@]}"; do
+  echo "  $name: ${passed[$name]}"
+done
+
+echo "Failed (${#failed[@]}):"
+for name in "${!failed[@]}"; do
+  echo "  $name: ${failed[$name]}"
+done
+
+echo "Not exist (${#not_exist[@]}):"
+for name in "${!not_exist[@]}"; do
+  echo "  $name: ${not_exist[$name]}"
+done
+
+[ ${#failed[@]} -ne 0 ] && exit 1 || exit 0
