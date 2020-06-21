@@ -57,7 +57,7 @@ class Bitmap {
                 }
             }
             const msb = Math.floor(Math.log2(mask));
-            const unusedBitMask = ((~ mask) & (((1 << msb) - 1) << 1 | 1)) >>> 0; // cannot use (1 << (msb + 1)) - 1 because valid msb = 31 would cause overflow in JS
+            const unusedBitMask = (~ mask) & (msb === 31 ? 0xffffffff : (1 << (msb + 1)) - 1);
             const bitShift = Math.log2(unusedBitMask + 1);
 
             if (!Number.isInteger(bitShift)) {
