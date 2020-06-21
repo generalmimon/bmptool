@@ -16,25 +16,31 @@ To get a local copy up and running follow these simple steps.
 ### Installation
 
 1. Clone the repo
-```sh
+```bash
 git clone https://github.com/generalmimon/bmptool.git
 ```
 
-2. Install NPM packages + compile bmp.ksy spec to parsing code (see [Kaitai Struct](https://kaitai.io/) project for more info)
-```sh
+2. Install NPM packages
+```bash
 npm install
 ```
 
+3. Build the BMP parsing code from the spec [`resources/bmp.ksy`](resources/bmp.ksy) (see [Kaitai Struct](https://kaitai.io/) project for more info)
+```bash
+npm run build
+```
+
+
 ### Usage
 Load BMP file `/path/to/image.bmp`:
-```sh
+```bash
 node index.js /path/to/image.bmp
 ```
 
 This will load the file into the memory, dump some info about the image to the screen and save resulting bitmap to PNG file (to `tmp/` directory).
 
 You can also specify more BMPs and even wildcards:
-```sh
+```bash
 node index.js /path/to/image.bmp /path/to/images/*.bmp
 ```
 
@@ -49,7 +55,7 @@ The BMP format specification in [Kaitai Struct](https://kaitai.io/) language is 
 ## Development
 
 If you do some changes to `resources/bmp.ksy` spec, compile it by doing:
-```sh
+```bash
 npm run build
 ```
 
@@ -59,13 +65,13 @@ The directory samples/ is designated for test samples. There are 4 subdirectorie
 
 I made a simple shell script that downloads samples from [BMP Suite](https://entropymine.com/jason/bmpsuite/bmpsuite/html/bmpsuite.html) and fills the in/ and exp/ folders. Invocation is simple (make sure the current working directory is the repository root):
 
-```sh
+```bash
 ./bin/get-bmpsuite
 ```
 
 Then you need to run the BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the file basename while generating output files, so it's necessary to process each folder (g/, q/ and b/) independently:
 
-```sh
+```bash
 node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/
 node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/
 node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/
@@ -75,7 +81,7 @@ If you want to log the parse exceptions with the .bmp filenames, add `-l log/fai
 
 Diffs between the real output files (from out/) and "ideal" ones (from exp/) are generated as follows:
 
-```sh
+```bash
 ./bin/test
 ```
 
