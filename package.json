@@ -10,14 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "iconv-lite": "^0.5.0",
+    "iconv-lite": "^0.5.2",
     "kaitai-struct": "^0.9.0-SNAPSHOT.1",
-    "kaitai-struct-compiler": "^0.9.0-SNAPSHOT20200406.203734.00cd42d1",
+    "kaitai-struct-compiler": "^0.9.0-SNAPSHOT20200831.190614.fe09b44a",
     "pngjs": "^3.4.0",
-    "yaml": "^1.7.2",
-    "yargs": "^15.0.2"
+    "yaml": "^1.10.0",
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
-    "pixelmatch": "^5.1.0"
+    "pixelmatch": "^5.2.1"
   }
 }
