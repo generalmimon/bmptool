@@ -92,7 +92,7 @@ If the `bmpsuite/` folder in the project root already contains the BMP samples (
 >   * for Linux - [this command](https://askubuntu.com/a/272020) installs both GNU `make` and `gcc` compiler
 >   * for Windows:
 >     1. Install [MinGW Installation Manager](https://osdn.net/projects/mingw/#:~:text=mingw-get-setup.exe) (the installer is called `mingw-get-setup.exe`) and launch it.
->     2. Mark `mingw32-base-bin` (for `gcc`) and `msys-base-bin` (for `make`) for installation (right-click > *Mark for installation*) and select *Installation > Apply Changes* in the top menu bar.
+>     2. In *Basic Setup*, mark `mingw32-base-bin` *(includes `gcc`)* and `msys-base-bin` *(includes `make`)* for installation (right-click > *Mark for Installation*) and select *Installation > Apply Changes* in the top menu bar.
 >     3. Press `⊞ Win` + `R` simultaneously to open the *Run* dialog.
 >     4. Type `SystemPropertiesAdvanced.exe` and click *OK*.
 >     5. Click *Environment Variables...* at the bottom of the dialog.
@@ -102,8 +102,8 @@ If the `bmpsuite/` folder in the project root already contains the BMP samples (
 >        >   1. Click the *New...* button.
 >        >   2. Fill in *Variable name:* `Path`, *Variable value:* `C:\MinGW\bin;C:\MinGW\msys\1.0\bin`
 >        >   3. Click *OK*.
->        >   4. Skip to step 10.
->        >
+>        >   4. Skip to step x. (10.)
+>
 >     7. Click *New* and type `C:\MinGW\bin`
 >     8. Click *New* again and type `C:\MinGW\msys\1.0\bin`
 >     9. Click *OK*.
