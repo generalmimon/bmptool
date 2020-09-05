@@ -31,7 +31,7 @@ jobs:
     - run: cd bmpsuite/ && make clean && make check && cd ../
       env:
         CC: gcc
-    - run: ./bin/get-bmpsuite
+    - run: ./bin/prepare-bmpsuite
     - run: node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/ -l log/failed.log
     - run: node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/ -l log/failed.log
     - run: node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/ -l log/failed.log
