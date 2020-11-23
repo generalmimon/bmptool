@@ -106,11 +106,11 @@ class Bitmap {
                 console.log('calculated size:', this.getLenRgbBitmap());
 
                 if (!hdr.usesFixedPalette) {
-                    console.log('colorMaskRed:  ', this.bmp.dibInfo.colorMaskRed.toString(2).padStart(hdr.bitsPerPixel, '0'));
-                    console.log('colorMaskGreen:', this.bmp.dibInfo.colorMaskGreen.toString(2).padStart(hdr.bitsPerPixel, '0'));
-                    console.log('colorMaskBlue: ', this.bmp.dibInfo.colorMaskBlue.toString(2).padStart(hdr.bitsPerPixel, '0'));
-                    if (this.bmp.dibInfo.colorMaskAlpha !== 0) {
-                        console.log('colorMaskAlpha:', this.bmp.dibInfo.colorMaskAlpha.toString(2).padStart(hdr.bitsPerPixel, '0'));
+                    const numMaskBytes = Math.ceil(hdr.bitsPerPixel / 8);
+                    const maskProps = ['colorMaskRed', 'colorMaskGreen', 'colorMaskBlue', 'colorMaskAlpha'];
+                    const maskPropWidth = Math.max.apply(null, maskProps.map(p => p.length)) + ':'.length;
+                    for (let p of maskProps) {
+                        console.log(`${p}:`.padEnd(maskPropWidth, ' '), utils.formatBitMask(this.bmp.dibInfo[p], numMaskBytes));
                     }
 
                     this.resolveColorMasks();

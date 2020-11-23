@@ -38,6 +38,20 @@ const getPixelColorFromBitmap = (x, y, bitmap) => {
     return [bitmap.data[i], bitmap.data[i + 1], bitmap.data[i + 2], bitmap.data[i + 3]];
 };
 
+const formatBitMask = (mask, minBytes) => {
+    const bytesRev = [];
+    do {
+        bytesRev.push(mask & 0xff);
+    } while ((mask >>>= 8) != 0);
+
+    const actualNumBytes = bytesRev.length;
+    if (actualNumBytes < minBytes) {
+        bytesRev.length = minBytes;
+        bytesRev.fill(0, actualNumBytes);
+    }
+    return bytesRev.reverse().map(b => b.toString(2).padStart(8, '0')).join(' ');
+}
+
 const dumpBitmap = (bmp) => {
     const chars = ' .\'`^",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
 
@@ -58,4 +72,5 @@ const dumpBitmap = (bmp) => {
 exports.getOwnPropsFromStruct = getOwnPropsFromStruct;
 exports.getPercievedBrightnessFromRgb = getPercievedBrightnessFromRgb;
 exports.getPixelColorFromBitmap = getPixelColorFromBitmap;
+exports.formatBitMask = formatBitMask;
 exports.dumpBitmap = dumpBitmap;
