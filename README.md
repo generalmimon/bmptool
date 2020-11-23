@@ -55,7 +55,17 @@ The BMP format specification in [Kaitai Struct](https://kaitai.io/) language is 
 
 ## Development
 
-If you make any changes in the [resources/bmp.ksy](./resources/bmp.ksy) spec, it's necessary to recompile the parser code `src/Bmp.js`:
+### Pulling the latest version of 'formats' submodule
+
+To fetch the `master` branch of the [kaitai_struct_formats](https://github.com/kaitai-io/kaitai_struct_formats/) repo into the folder `formats/`, run:
+
+```bash
+git pull --recurse-submodule
+git submodule update --remote formats
+```
+
+Whenever the `formats/image/bmp.ksy` spec is updated, it's necessary to recompile the parser code  in `src/Bmp.js`:
+
 ```bash
 npm run build
 ```
