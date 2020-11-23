@@ -11,26 +11,26 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-* Node.js (JavaScript runtime environment) + npm (package manager) - https://nodejs.org/en/download/
+* Node.js (JavaScript runtime environment) + npm (package manager): https://nodejs.org/en/download/
 
 ### Installation
 
 1. Clone the repo
-```bash
-git clone https://github.com/generalmimon/bmptool.git
-```
+   ```bash
+   git clone https://github.com/generalmimon/bmptool.git
+   ```
 
-> **Note:** If you don't want to use `git`, you can download the project [in ZIP archive](https://github.com/generalmimon/bmptool/archive/master.zip).
+> **Note:** If you don't want to use `git`, you can download the project [in a ZIP archive](https://github.com/generalmimon/bmptool/archive/master.zip).
 
 2. Install NPM packages
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Build the BMP parsing code from the spec [`resources/bmp.ksy`](resources/bmp.ksy) (see [Kaitai Struct](https://kaitai.io/) project for more info)
-```bash
-npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 ### Usage
 Load BMP file `/path/to/image.bmp`:
@@ -76,7 +76,7 @@ BMP Tool uses the excellent [BMP Suite](https://entropymine.com/jason/bmpsuite/b
 There are two ways how you can get the samples from BMP Suite.
 
   1. [Building samples from source](#1-building-samples-from-source) (using `make` and `gcc`, recommended)
-  2. [Downloading samples in ZIP archive](#2-downloading-samples-in-zip-archive)
+  2. [Downloading samples in a ZIP archive](#2-downloading-samples-in-a-zip-archive)
 
 If the `bmpsuite/` folder in the project root already contains the BMP samples (i.e. the subdirs `b/`, `g/` and `q/` are full of `.bmp` files), skip to section [Testing on samples from BMP Suite](#testing-on-samples-from-bmp-suite).
 
@@ -122,19 +122,17 @@ cd ../ || exit 1
 
 >   1. You can choose any `cc`-compatible C compiler installed on your system, e.g. `cc`, `gcc`, `clang`, etc.
 
-#### 2. Downloading samples in ZIP archive
+#### 2. Downloading samples in a ZIP archive
 
-Go to [https://entropymine.com/jason/bmpsuite/](https://entropymine.com/jason/bmpsuite/#:~:text=bmpsuite-2.6.zip) and download the `bmpsuite-2.6.zip` file. Then copy all files and directories from the archive directly to `bmpsuite/` folder in the project root directory.
+Go to [https://entropymine.com/jason/bmpsuite/releases/](https://entropymine.com/jason/bmpsuite/releases/#:~:text=bmpsuite-2.6.zip) and download the `bmpsuite-2.6.zip` file. Then copy all files and directories from the archive directly to `bmpsuite/` folder in the project root directory.
 
 ### Testing on samples from BMP Suite
 
-When you have the `bmpsuite/` folder initialized and filled with .bmp samples, it's necessary to prepare them for BMP Tool usage (i.e. moving them to samples/in/bmpsuite and samples/exp/bmpsuite folders):
+When you have the `bmpsuite/` folder initialized and filled with .bmp samples (see [Getting the BMP Suite samples for testing](#getting-the-bmp-suite-samples-for-testing)), it's necessary to prepare them for BMP Tool usage (i.e. moving them to samples/in/bmpsuite and samples/exp/bmpsuite folders):
 
 ```bash
 ./bin/prepare-bmpsuite
 ```
-
-> **Note:** If the above script fails with an error similar to `No such file or directory`, first follow the steps in section [Getting the BMP Suite samples for testing](#getting-the-bmp-suite-samples-for-testing).
 
 Then run BMP Tool with the sample input bitmaps and set the output directory to samples/out. The program takes just the file basename while generating output files, so it's necessary to process each folder (g/, q/ and b/) independently:
 
