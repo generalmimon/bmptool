@@ -12,11 +12,7 @@ const getOwnPropsFromStruct = (struct, deep = false) => {
 
     for (let key of keys) {
         if (key.charAt(0) === '_') {
-            if(key.substring(0, 3) === '_m_') {
-                key = key.substring(3);
-            } else {
-                continue;
-            }
+            continue;
         }
         if (typeof struct[key] === 'object' && !Object.getPrototypeOf(struct[key]).BYTES_PER_ELEMENT) {
             if (deep) {
