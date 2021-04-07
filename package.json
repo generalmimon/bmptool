@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node ksc.js -d src formats/image/bmp.ksy"
+    "build": "node ksc.js -d src resources/bmp.ksy"
   },
   "author": "",
   "license": "ISC",
