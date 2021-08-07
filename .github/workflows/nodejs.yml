@@ -32,14 +32,18 @@ jobs:
       env:
         CC: gcc
     - run: ./bin/prepare-bmpsuite
-    - run: node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/ -l log/failed.log
-    - run: node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/ -l log/failed.log
-    - run: node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/ -l log/failed.log
+    - name: Use bmptool to process the input samples
+      run: |
+        node index.js samples/in/*.bmp -d samples/out/
+        node index.js samples/in/bmpsuite/g/*.bmp -d samples/out/bmpsuite/g/ -l log/failed.log
+        node index.js samples/in/bmpsuite/q/*.bmp -d samples/out/bmpsuite/q/ -l log/failed.log
+        node index.js samples/in/bmpsuite/b/*.bmp -d samples/out/bmpsuite/b/ -l log/failed.log
     - name: Upload the log of failed BMP samples
       uses: actions/upload-artifact@v1
       with:
         name: failed-samples-log
         path: log/failed.log
-    - run: ./bin/test
+    - name: Compare output samples with expected ones, generate diffs
+      run: ./bin/test
       env:
         CI: true
