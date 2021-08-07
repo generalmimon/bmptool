@@ -21,21 +21,21 @@ add_test_status () {
 
 for file in **/*.png
 do
-    mkdir ../diff/"$(dirname "$file")" -p
-    status="failed"
-    if [ -f ../exp/"$file" ]
-    then
-        echo "[SAMPLE] ../exp/$file"
-    else
-        echo "[ERROR] ../exp/$file does not exist"
-        add_test_status "$file" "not_exist"
-        continue
-    fi
-    npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
-    if [ $? -eq 0 ]; then
-        status="passed"
-    fi
-    add_test_status "$file" "$status"
+  mkdir ../diff/"$(dirname "$file")" -p
+  status="failed"
+  if [ -f ../exp/"$file" ]
+  then
+      echo "[SAMPLE] ../exp/$file"
+  else
+      echo "[ERROR] ../exp/$file does not exist"
+      add_test_status "$file" "not_exist"
+      continue
+  fi
+  npx pixelmatch "$file" ../exp/"$file" ../diff/"$file" 0 true
+  if [ $? -eq 0 ]; then
+      status="passed"
+  fi
+  add_test_status "$file" "$status"
 done
 shopt -u globstar
 
