@@ -14,13 +14,14 @@ cp -r -t samples/exp/bmpsuite/html/ bmpsuite/html/*.png || exit 1
 cd samples/exp/bmpsuite || exit 1
 mkdir b/ g/ q/
 
-cp -v -f override/*.png html/
+compgen -G "override/*.png" && cp -v -f override/*.png html/
 
 # TODO: maybe create symlinks instead
 cd html/ || exit 1
 
 cp pal1.png pal1wb.png
-cp pal1.png pal1huff.png
+cp pal1.png pal1huffmsb.png
+cp pal1.png pal1hufflsb.png
 cp pal4.png pal4rle.png
 cp pal8.png pal8-0.png
 cp pal8.png pal8rle.png

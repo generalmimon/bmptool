@@ -123,7 +123,7 @@ If the `bmpsuite/` folder in the project root already contains the BMP samples (
 The samples from BMP Suite can be compiled using the following commands (make sure the current working directory is the project root):
 
 ```bash
-git clone --branch 2.6 --depth 1 https://github.com/jsummers/bmpsuite.git
+git clone --branch 2.7 --depth 1 https://github.com/jsummers/bmpsuite.git
 cd bmpsuite/ || exit 1
 export CC=gcc # (1.)
 make clean && make check
@@ -134,7 +134,7 @@ cd ../ || exit 1
 
 #### 2. Downloading samples in a ZIP archive
 
-Go to [https://entropymine.com/jason/bmpsuite/releases/](https://entropymine.com/jason/bmpsuite/releases/#:~:text=bmpsuite-2.6.zip) and download the `bmpsuite-2.6.zip` file. Then copy all files and directories from the archive directly to `bmpsuite/` folder in the project root directory.
+Go to [https://entropymine.com/jason/bmpsuite/releases/](https://entropymine.com/jason/bmpsuite/releases/#:~:text=bmpsuite-2.7.zip) and download the `bmpsuite-2.7.zip` file. Then copy all files and directories from the archive directly to `bmpsuite/` folder in the project root directory.
 
 ### Testing on samples from BMP Suite
 

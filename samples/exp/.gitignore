@@ -1,8 +1,5 @@
 *
 !.gitignore
-!bmpsuite-2.5
-!bmpsuite-2.5/override
-!bmpsuite-2.5/override/*.png
 !bmpsuite
 !bmpsuite/override
 !bmpsuite/override/*.png
