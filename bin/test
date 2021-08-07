@@ -23,9 +23,10 @@ for file in **/*.png
 do
   mkdir ../diff/"$(dirname "$file")" -p
   status="failed"
+  echo "--"
   if [ -f ../exp/"$file" ]
   then
-      echo "[SAMPLE] ../exp/$file"
+      echo "../exp/$file"
   else
       echo "[ERROR] ../exp/$file does not exist"
       add_test_status "$file" "not_exist"
