@@ -1,5 +1,2 @@
-*
-!.gitignore
-!bmpsuite
-!bmpsuite/override
-!bmpsuite/override/*.png
+/bmpsuite/*
+!/bmpsuite/override/
